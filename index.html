@@ -189,6 +189,11 @@ footer p{margin:0;font-size:13px;color:var(--muted)}
   .hint{display:none}
   .legendbar{display:none}
 }
+.consent{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;align-items:center;justify-content:center;gap:12px 18px;flex-wrap:wrap;background:rgba(21,30,72,.97);border-top:1px solid var(--gold);padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-shadow:0 -10px 30px rgba(0,0,0,.4)}
+.consent p{margin:0;font-size:13.5px;max-width:640px;min-width:0}
+.ck-btns{display:flex;gap:8px}
+.ck-btns button{border:1px solid var(--line);background:var(--night-3);border-radius:999px;padding:7px 16px;font-size:13.5px}
+.ck-btns #ck-yes{background:var(--gold);border-color:var(--gold);color:#1a1530;font-weight:600}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -272,6 +277,11 @@ footer p{margin:0;font-size:13px;color:var(--muted)}
   </section>
 </main>
 
+<div class="consent" id="consent" hidden role="region" aria-label="Cookie consent">
+  <p data-i="ck-text">เว็บนี้ใช้คุกกี้ของ Google Analytics เพื่อนับจำนวนผู้เข้าชมและปรับปรุงแผนผังงาน ไม่เก็บข้อมูลที่ระบุตัวตนของคุณ</p>
+  <div class="ck-btns"><button id="ck-no" data-i="ck-no">ไม่ยอมรับ</button><button id="ck-yes" data-i="ck-yes">ยอมรับ</button></div>
+</div>
+
 <footer>
   <div class="wrap">
     <div class="partners">
@@ -288,6 +298,20 @@ footer p{margin:0;font-size:13px;color:var(--muted)}
 (function(){
 const NS="http://www.w3.org/2000/svg";
 const $=s=>document.querySelector(s);
+
+/* ---------- Analytics (Google Analytics 4, only after consent) ---------- */
+const GA_ID="G-GSLECBNP7G";
+const gaAllowed=/^https?:$/.test(location.protocol)&&!/claude/i.test(location.hostname);
+let gaOn=false;
+function gaLoad(){
+  if(gaOn||!gaAllowed)return; gaOn=true;
+  window.dataLayer=window.dataLayer||[];
+  window.gtag=function(){dataLayer.push(arguments);};
+  gtag("js",new Date()); gtag("config",GA_ID,{anonymize_ip:true});
+  const sc=document.createElement("script");sc.async=true;sc.src="https://www.googletagmanager.com/gtag/js?id="+GA_ID;document.head.appendChild(sc);
+  const h=(location.hash||"").slice(1); if(h)track("open_link",{target:h});
+}
+function track(name,params){ if(gaOn&&window.gtag){try{gtag("event",name,params||{});}catch(e){}} }
 
 /* ---------- Zones ---------- */
 const ZONES=[
@@ -457,10 +481,10 @@ function slots(d){
 
 /* ---------- i18n ---------- */
 const T={
-  th:{sub:"Winter Festival Chiangmai 2026 · Nim City Community Mall","f-date":"<b>1–8 ธ.ค. 2026</b>","f-time":"เปิด <b>15:00 น.</b> เป็นต้นไป","f-place":"<b>Nim City</b> Community Mall",hint:"ลากเพื่อเลื่อน · หยิกหรือหมุนลูกกลิ้งเพื่อซูม · แตะบูธเพื่อดูร้าน","hl-sub":"8 จุดตามเส้นทางแนะนำ แตะเพื่อดูตำแหน่งบนผัง","sc-sub":"ตารางโชว์และดนตรีแต่ละวัน","sc-note":"*ตารางงานอาจมีการเปลี่ยนแปลงตามความเหมาะสม",foot:"Winter Festival Chiangmai ครั้งที่ 3 · 1–8 ธันวาคม 2026 · Nim City Community Mall",
+  th:{sub:"Winter Festival Chiangmai 2026 · Nim City Community Mall","f-date":"<b>1–8 ธ.ค. 2026</b>","f-time":"เปิด <b>15:00 น.</b> เป็นต้นไป","f-place":"<b>Nim City</b> Community Mall",hint:"ลากเพื่อเลื่อน · หยิกหรือหมุนลูกกลิ้งเพื่อซูม · แตะบูธเพื่อดูร้าน","hl-sub":"8 จุดตามเส้นทางแนะนำ แตะเพื่อดูตำแหน่งบนผัง","sc-sub":"ตารางโชว์และดนตรีแต่ละวัน","sc-note":"*ตารางงานอาจมีการเปลี่ยนแปลงตามความเหมาะสม","ck-text":"เว็บนี้ใช้คุกกี้ของ Google Analytics เพื่อนับจำนวนผู้เข้าชมและปรับปรุงแผนผังงาน ไม่เก็บข้อมูลที่ระบุตัวตนของคุณ","ck-yes":"ยอมรับ","ck-no":"ไม่ยอมรับ",foot:"Winter Festival Chiangmai ครั้งที่ 3 · 1–8 ธันวาคม 2026 · Nim City Community Mall",
       all:"ทุกโซน",booths:"บูธ",tbc:"รอประกาศรายชื่อร้าน",ph:"ค้นหาเลขบูธหรือชื่อร้าน เช่น F12",found:"ผลการค้นหา",none:"ไม่พบบูธหรือร้านที่ค้นหา ลองพิมพ์เลขบูธ เช่น F12 หรือ S5",booth:"บูธ"},
   en:{sub:"Winter Festival Chiangmai 2026 · Nim City Community Mall","f-date":"<b>1–8 Dec 2026</b>","f-time":"Open from <b>3:00 PM</b>","f-place":"<b>Nim City</b> Community Mall",hint:"Drag to pan · pinch or scroll to zoom · tap a booth",
-      "hl-sub":"8 stops along the suggested route. Tap to find each on the map","sc-sub":"Shows and music each night","sc-note":"*Schedule may change",foot:"3rd Winter Festival Chiangmai · 1–8 December 2026 · Nim City Community Mall",
+      "hl-sub":"8 stops along the suggested route. Tap to find each on the map","sc-sub":"Shows and music each night","sc-note":"*Schedule may change","ck-text":"This site uses Google Analytics cookies to count visits and improve the event map. It does not collect information that identifies you.","ck-yes":"Accept","ck-no":"Decline",foot:"3rd Winter Festival Chiangmai · 1–8 December 2026 · Nim City Community Mall",
       all:"All zones",booths:"booths",tbc:"Shop to be announced",ph:"Search booth no. or shop, e.g. F12",found:"Search results",none:"No booth or shop matches. Try a booth number like F12 or S5",booth:"Booth"}
 };
 let lang="th";
@@ -594,6 +618,7 @@ function drawFac(){
 }
 function showFac(i){
   const f=FAC[i],ft=FTYPES[f.t];
+  track("facility_view",{facility:f.t});
   if(sel&&nodes[sel])nodes[sel].classList.remove("sel");sel=null;
   const card=$("#card");card.className="card pop fac-card";card.hidden=false;anchor={x:f.x,y:f.y,r:7};
   const d=lang==="en"?(f.den||ft.den):(f.dth||ft.dth);
@@ -735,12 +760,14 @@ function renderList(){
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"})[c]);}
 function setZone(id,zoom){
   zone=id; renderChips(); renderList();
+  if(zoom&&id)track("zone_select",{zone:id});
   if(zoom&&id){animateTo(fitBox(bboxOf(booths.filter(b=>b.zone===id)),1.35));}
   if(zoom&&!id)animateTo(fitBox(FULL,1.02));
   setHash(sel||id||"");
 }
-function select(id,{zoom}){
+function select(id,{zoom,quiet}){
   const b=BY[id]; if(!b)return;
+  if(!quiet){const vv=VENDORS[id];track("booth_view",{booth_id:id,zone:b.zone,shop_name:vv&&vv.name?vv.name:"(tbc)"});}
   if(sel&&nodes[sel])nodes[sel].classList.remove("sel");
   sel=id; nodes[id].classList.add("sel");
   nodes[id].parentNode.appendChild(nodes[id]);
@@ -759,6 +786,7 @@ function select(id,{zoom}){
 function closeCard(){ $("#card").hidden=true; if(sel&&nodes[sel])nodes[sel].classList.remove("sel"); sel=null; renderList(); setHash(zone||""); }
 function showPoi(n,zoom){
   const p=POIS.find(x=>x.n===n);if(!p)return;
+  track("highlight_view",{highlight:p.en});
   if(sel&&nodes[sel])nodes[sel].classList.remove("sel");sel=null;
   const card=$("#card");card.className="card pop poi";card.hidden=false;anchor={x:p.x,y:p.y,r:7};
   card.innerHTML=`<div class="no">${p.n}</div><div class="zn">Highlight</div><button class="x" aria-label="Close">×</button><h3>${lang==="en"?p.en:p.th}</h3><p>${lang==="en"?p.den:p.dth}</p>`;
@@ -768,7 +796,7 @@ function showPoi(n,zoom){
 function setHash(h){try{history.replaceState(null,"",h?"#"+h:location.pathname+location.search);}catch(e){}}
 
 let qt;
-$("#q").addEventListener("input",e=>{clearTimeout(qt);qt=setTimeout(()=>{query=e.target.value.trim();renderList();
+$("#q").addEventListener("input",e=>{clearTimeout(qt);qt=setTimeout(()=>{query=e.target.value.trim();renderList();clearTimeout(window._qs);if(query.length>=2)window._qs=setTimeout(()=>track("search",{search_term:query}),1200);
   const hits=booths.filter(b=>matches(b)&&(!zone||b.zone===zone));
   if(query&&hits.length&&hits.length<=12)animateTo(fitBox(bboxOf(hits),1.6));},120);});
 $("#q").addEventListener("keydown",e=>{if(e.key==="Enter"){const q=e.target.value.trim().toUpperCase();const hit=BY[q]||booths.find(b=>matches(b));if(hit)select(hit.id,{zoom:true});}});
@@ -796,18 +824,28 @@ function renderSched(){
 
 /* ---------- Language ---------- */
 function setLang(l){
+  if(l!==lang)track("language_change",{language:l});
   lang=l;try{localStorage.setItem("wf-lang",l);}catch(e){}
   document.documentElement.lang=l;
   $("#lang-th").setAttribute("aria-pressed",l==="th");$("#lang-en").setAttribute("aria-pressed",l==="en");
   document.querySelectorAll("[data-i]").forEach(n=>{const k=n.dataset.i;if(T[l][k]!=null)n.innerHTML=T[l][k];});
   $("#q").placeholder=t("ph");
   renderChips();renderList();renderHL();renderDays();renderSched();
-  if(sel)select(sel,{zoom:false});else $("#card").hidden=true;
+  if(sel)select(sel,{zoom:false,quiet:true});else $("#card").hidden=true;
 }
 $("#lang-th").onclick=()=>setLang("th");$("#lang-en").onclick=()=>setLang("en");
 
 /* ---------- Boot ---------- */
 drawBase();drawBooths();drawPins();drawFac();
+(function(){
+  let c=null; try{c=localStorage.getItem("wf-consent");}catch(e){}
+  const box=document.getElementById("consent");
+  if(c==="yes")gaLoad(); else if(c!=="no"&&gaAllowed)box.hidden=false;
+  const done=v=>{try{localStorage.setItem("wf-consent",v);}catch(e){} box.hidden=true; if(v==="yes")gaLoad();};
+  document.getElementById("ck-yes").onclick=()=>done("yes");
+  document.getElementById("ck-no").onclick=()=>done("no");
+  document.querySelectorAll(".social a").forEach(a=>a.addEventListener("click",()=>track("social_click",{platform:a.getAttribute("aria-label"),place:a.closest(".foot")?"footer":"header"})));
+})();
 (function(){const c=cs();apply(c.h/c.w>0.9?fitBox({x:800,y:140,w:390,h:520},1.02):fitBox(FULL,1.02));})();
 setLang(lang);
 const h=decodeURIComponent((location.hash||"").slice(1));
