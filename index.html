@@ -337,20 +337,22 @@ const ZONES=[
   {id:"food",code:"F",color:"var(--z-food)",ink:"#fff4e6",th:"อาหาร",en:"Food",nth:"Zone 2 · รอบลานแลนด์มาร์ก หอคอยวังวาน",nen:"Zone 2 · around the bell-tower landmark"},
   {id:"bar",code:"A",color:"var(--z-bar)",ink:"#06201e",th:"เครื่องดื่มแอลกอฮอล์",en:"Alcohol",nth:"Zone 2 · ใกล้ Chime & Chill",nen:"Zone 2 · next to Chime & Chill"},
   {id:"craft",code:"C",color:"var(--z-craft)",ink:"#1a1530",th:"คราฟต์และแฟชั่น",en:"Craft & Fashion",nth:"Zone 2 · แนวด้านบนของลาน",nen:"Zone 2 · along the top edge"},
+  {id:"hotel",code:"H",color:"var(--z-hotel)",ink:"#121933",th:"โรงแรมและเวลเนส",en:"Hotel & Wellness",nth:"Zone 2 · มุมขวาบน",nen:"Zone 2 · top right corner"},
   {id:"partner",code:"P",color:"var(--z-partner)",ink:"#1b2250",th:"พาร์ทเนอร์",en:"Partners",nth:"บูธพาร์ทเนอร์หน้า Rimping Supermarket",nen:"Partner booths in front of Rimping Supermarket"}
 ];
 const ZBY=Object.fromEntries(ZONES.map(z=>[z.id,z]));
-const ZCODE={S:"sweets",F:"food",A:"bar",C:"craft"};
+const ZCODE={S:"sweets",F:"food",A:"bar",C:"craft",H:"hotel"};
 
 /* ---------- Vendors ----------
    ใส่ชื่อร้านตามเลขบูธ เช่น  F12:{name:"ข้าวซอยป้าแดง", d:"ข้าวซอยไก่ สูตรเชียงใหม่"}
    บูธที่ยังไม่มีข้อมูลจะแสดง "รอประกาศรายชื่อร้าน" */
 const VENDORS={
   RP:{name:"Rimping Supermarket",d:"บูธพาร์ทเนอร์ริมปิง ซูเปอร์มาร์เก็ต",den:"Rimping Supermarket partner booths"},
-  NC:{name:"Nim City",d:"บูธพาร์ทเนอร์ Nim City",den:"Nim City partner booths"},
+  NC:{name:"Nim City",d:"บูธ Nim City: Chicken tenders, ยำเป็นดาว, Popnema, เสพติดชา, เดอะ โวคาโน่, Sofuto, Biker Burger, Papa Beef, ท่าช้าง, sa - MOOD - Smoothies, โอ้กะจู๋",den:"Nim City booths: Chicken tenders, ยำเป็นดาว, Popnema, เสพติดชา, เดอะ โวคาโน่, Sofuto, Biker Burger, Papa Beef, ท่าช้าง, sa - MOOD - Smoothies, โอ้กะจู๋"},
   F1:{name:"RAI Bistro"},
+  F2:{name:"หอมเตย"},
   F3:{name:"Cozy Honey"},
-  F4:{name:"พิซซ่าชีสสึ"},
+  F4:{name:"formi.cnx"},
   F5:{name:"Mo Melo"},
   F6:{name:"หมึกทอด มาโจเฮิร์ทเบยเบ้ย by หมอภีม"},
   F7:{name:"POTATO HUB"},
@@ -360,6 +362,7 @@ const VENDORS={
   F11:{name:"ด๊องดอง ทะเลทอง"},
   F12:{name:"Seoul Sweet"},
   F13:{name:"SUNRISE"},
+  F14:{name:"ฉลู-เนื้อทอด"},
   F15:{name:"คอร์น โซน"},
   F16:{name:"น้ำผึ้งตรากาสะลอง"},
   F17:{name:"ราดหน้าเฮียอ้วน"},
@@ -367,6 +370,7 @@ const VENDORS={
   F19:{name:"Guten Appetite Chiangmai"},
   F20:{name:"DE RUNNING ไวน์ลูกหว้า"},
   F21:{name:"ศรีวรรณอาหารเหนือเชียงใหม่"},
+  F22:{name:"PAPA POPS HOMEMADE"},
   F23:{name:"Zolza"},
   F24:{name:"เจริญอาหาร"},
   F25:{name:"Fora Bee"},
@@ -377,8 +381,11 @@ const VENDORS={
   F31:{name:"วนัสนันท์"},
   F32:{name:"Ohayo Gyoza"},
   F33:{name:"มอมอเบเกอรี่"},
+  F34:{name:"หมึกทอด มาโจเฮิร์ทเบยเบ้ย by หมอภีม"},
+  F36:{name:"jojojong tea"},
+  F37:{name:"บาร์บีคิว"},
   F39:{name:"พอมาดอง"},
-  F40:{name:"ขมมบ้าบิ่นโคตรมะพร้าวหลานสาวยายคำ"},
+  F40:{name:"ขนมบ้าบิ่นโคตรมะพร้าวหลานสาวยายคำ"},
   F41:{name:"ต.เนื้อย่าง"},
   F42:{name:"Paul Burger"},
   F43:{name:"ลาซานญ่าพรีเมียม"},
@@ -390,8 +397,10 @@ const VENDORS={
   F49:{name:"CP RAM"},
   F50:{name:"อาเว้ง"},
   F51:{name:"Molecule Cafe"},
+  F52:{name:"SOI SEOUL"},
   F53:{name:"Molecule Cafe"},
   F54:{name:"What the frog"},
+  F55:{name:"Hambagu Lab"},
   F56:{name:"In fumee’ Smoke house"},
   F57:{name:"Shinsen Bento"},
   F58:{name:"HANA Izakaya"},
@@ -413,8 +422,10 @@ const VENDORS={
   C7:{name:"Kob Pa Pang"},
   C8:{name:"Mochit Cotton"},
   C9:{name:"AEMhandcraft"},
+  H1:{name:"Littel Planet Workshop"},
   S12:{name:"Chiamgmai Freshmilk"},
   S14:{name:"GLAM COFFEE ROASTER"},
+  S15:{name:"The cookie cult"},
   S26:{name:"ธนาชาใต้"},
   S27:{name:"Cheva & Chavee"},
   S28:{name:"MontBlanc patisserie"}
@@ -438,6 +449,7 @@ add(0,[["F47",1015,421],["F48",1029,421],["F49",1015,435],["F50",1029,435]]);
 add(42,[["F51",1083,387],["F53",1073,397],["F52",1093,396],["F54",1083,406]]);
 add(45,[["F55",1077,317],["F56",1067,327],["F57",1087,327],["F58",1077,337]]);
 add(23,[["A1",940,447.5],["A2",953,453],["A3",966,458.5],["A4",979,464],["A5",992,469.5],["A6",934.5,461],["A7",947.5,466.5],["A8",960.5,472],["A9",973.5,477.5],["A10",986.5,483]]);
+add(-30,[["H1",1058,189]]);
 B.push(["RP",73,377,0,84,62]);B.push(["NC",165,377,0,86,62]);
 
 const booths=B.map(([id,x,y,a,w,h])=>({id,x,y,a,w:w||13,h:h||13,zone:id==="RP"||id==="NC"?"partner":ZCODE[id[0]]}));
